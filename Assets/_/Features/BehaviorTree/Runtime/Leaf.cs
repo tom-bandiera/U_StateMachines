@@ -2,6 +2,7 @@ using BehaviorTree.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BehaviorTree.Runtime
 {
@@ -87,6 +88,38 @@ namespace BehaviorTree.Runtime
             }
 
             return State.SUCCESS;
+        }
+    }
+
+    public class PatrolLeaf : Leaf
+    {
+        private NavMeshAgent _agent;
+        private List<GameObject> _patrolPoints;
+        private int _index;
+
+        public PatrolLeaf(NavMeshAgent agent, List<GameObject> patrolPoints)
+        {
+            _agent = agent;
+            _patrolPoints = patrolPoints;
+        }
+
+        public override State Process()
+        {
+            Debug.Log("Enter patrol process");
+            var target = _patrolPoints[_index];
+            _agent.SetDestination(target.transform.position);
+
+            if (Vector3.SqrMagnitude(_agent.transform.position - target.transform.position)  < .5f)
+            {
+                _index++;
+                if (_index >= _patrolPoints.Count)
+                {
+                    _index = 0;
+                    return State.SUCCESS;
+                }
+            }
+
+            return State.RUNNING;
         }
     }
 }

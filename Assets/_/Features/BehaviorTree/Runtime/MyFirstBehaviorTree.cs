@@ -4,20 +4,23 @@ using UnityEngine;
 
 namespace BehaviorTree.Runtime
 {
-    public class MyFirstBehaviorTree : MonoBehaviour
+    public class MyFirstBehaviorTree : MonoBehaviour 
     {
-        private Selector _mainNode;
+        /*private Selector _mainNode;
         private Sequence _composite01;
-        private Selector _selector;
+        private Selector _selector;*/
         [SerializeField] private GameObject _gameObject;
+
+        private AllNodesCheckSelector _mainNode;
 
 
         private void Awake()
         {
+            /* 
             _mainNode = new Selector();
             _composite01 = new Sequence();
 
-            // _composite01.m_children.Add(new ReturnFailLeaf());
+            _composite01.m_children.Add(new ReturnFailLeaf());
             _composite01.m_children.Add(new TellMeSomethingLeaf("Bonjour!"));
             _composite01.m_children.Add(new WaitForSecondsLeaf(2));
             _composite01.m_children.Add(new ActivateGameObjectLeaf(_gameObject, true));
@@ -31,6 +34,13 @@ namespace BehaviorTree.Runtime
 
             _mainNode.m_children.Add(_composite01);
             _mainNode.m_children.Add(_selector);
+            */
+
+            _mainNode = new AllNodesCheckSelector();
+
+            _mainNode.m_children.Add(new ReturnFailLeaf());
+            _mainNode.m_children.Add(new TellMeSomethingLeaf("Hi"));
+            _mainNode.m_children.Add(new TellMeSomethingLeaf("Hi 2"));
         }
 
 
