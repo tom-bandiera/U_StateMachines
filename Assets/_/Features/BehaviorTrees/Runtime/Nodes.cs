@@ -6,7 +6,7 @@ namespace BehaviorTrees.Runtime
 {
     public class Node
     {
-        public enum Status { Success, Failure, Runnning }
+        public enum Status { Success, Failure, Running }
 
         public readonly string m_name;
 
@@ -65,6 +65,60 @@ namespace BehaviorTrees.Runtime
             }
 
             return Status.Success; 
+        }
+    }
+
+    public class Sequence : Node
+    {
+        public Sequence(string name) : base(name) { }
+
+        public override Status Process()
+        {
+            if (_currentChildIndex < m_children.Count)
+            {
+                switch (m_children[_currentChildIndex].Process()) 
+                {
+                    case Status.Running:
+                        return Status.Running;
+                    case Status.Failure:
+                        Reset();
+                        return Status.Failure;
+                    // Success
+                    default:
+                        _currentChildIndex++;
+                        return Status.Running;
+                }
+            }
+
+            Reset();
+            return Status.Success;
+        }
+    }
+
+    public class Selector : Node
+    {
+        public Selector(string name) : base(name) { }
+
+        public override Status Process()
+        {
+            if (_currentChildIndex < m_children.Count)
+            {
+                switch (m_children[_currentChildIndex].Process())
+                {
+                    case Status.Running:
+                        return Status.Running;
+                    case Status.Success:
+                        Reset();
+                        return Status.Success;
+                    // Success
+                   default:
+                        _currentChildIndex++;
+                        return Status.Running;
+                }
+            }
+
+            Reset();
+            return Status.Failure;
         }
     }
 }
